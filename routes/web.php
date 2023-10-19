@@ -28,6 +28,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/add-client', [ClientController::class, 'clientForm'])->name('add-client');
+    Route::post('/categories', [ClientController::class, 'addRequirement'])->name('categories');
+    Route::post('/save-client', [ClientController::class, 'addClient'])->name('save-client');
 });
 
 require __DIR__.'/auth.php';

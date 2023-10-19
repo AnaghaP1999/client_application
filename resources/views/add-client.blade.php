@@ -21,11 +21,11 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form id="category-form">
+                                        <form id="category-form" action="/categories" method="post">
                                             @csrf
-                                            <x-text-input id="quantity" name="quantity" type="text" class="mt-1 block w-full" placeholder="Category Name" value="{{ old('quantity') }}"/>
-                                            @error('quantity')
-                                                <span class="error" id="quantity-error" style="color: red; font-size: 14px; margin-top: 5px;">{{ $message }}</span>
+                                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" placeholder="Category Name" value="{{ old('name') }}"/>
+                                            @error('name')
+                                                <span class="error" id="name-error" style="color: red; font-size: 14px; margin-top: 5px;">{{ $message }}</span>
                                             @enderror
                                         </form>
                                     </div>
@@ -43,35 +43,33 @@
                                 {{ __('Add Client') }}
                             </h2>
                         </header>
-                        <form method="POST" action="" id="invoiceForm" class="mt-6 space-y-6">
+                        <form method="POST" action="{{ route('save-client') }}" id="invoiceForm" class="mt-6 space-y-6">
                             @csrf
-
+                        <x-text-input id="user_id" name="user_id" type="hidden" class="mt-1 block w-full"  value="{{ Auth::user()->id }}"/>
                             <div class="flex flex-wrap -mx-4">
                                 <div class="w-full px-4">
-                                    <x-input-label for="quantity" :value="__('Client Name')" />
-                                    <x-text-input id="quantity" name="quantity" type="text" class="mt-1 block w-full" placeholder="Client Name" value="{{ old('quantity') }}"/>
-                                    @error('quantity')
-                                        <span class="error" id="quantity-error" style="color: red; font-size: 14px; margin-top: 5px;">{{ $message }}</span>
+                                    <x-input-label for="name" :value="__('Client Name')" />
+                                    <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" placeholder="Client Name" value="{{ old('name') }}"/>
+                                    @error('name')
+                                        <span class="error" id="name-error" style="color: red; font-size: 14px; margin-top: 5px;">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="w-full px-4"><br>
-                                    <x-input-label for="tax_perc" :value="__('Category')"/>
-                                        <select id="tax_perc" name="tax_perc" class="mt-1 block w-full" placeholder="Tax Percentage">
-                                            <option value="">Select Option</option>
-                                            <option value="0" {{ old('tax_perc') == '0' ? 'selected' : '' }}>0%</option>
-                                            <option value="5" {{ old('tax_perc') == '5' ? 'selected' : '' }}>5%</option>
-                                            <option value="12" {{ old('tax_perc') == '12' ? 'selected' : '' }}>12%</option>
-                                            <option value="18" {{ old('tax_perc') == '18' ? 'selected' : '' }}>18%</option>
-                                            <option value="28" {{ old('tax_perc') == '28' ? 'selected' : '' }}>28%</option>
-                                        </select>
-                                        @error('tax_perc')
-                                        <span class="error" id="tax_perc-error" style="color: red; font-size: 14px; margin-top: 5px;">{{ $message }}</span>
+                                    <x-input-label for="category_id" :value="__('Category')"/>
+                                    <select id="category_id" name="category_id" class="mt-1 block w-full">
+                                        <option value="">Select Category</option>
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
+                                        @error('category_id')
+                                        <span class="error" id="category_id-error" style="color: red; font-size: 14px; margin-top: 5px;">{{ $message }}</span>
                                         @enderror
                                 </div>
                             </div>
                             <div class="flex items-center gap-4">
                                 <x-primary-button type="submit">{{ __('Add') }}</x-primary-button>
-                                <x-primary-button id="cancel-button" type="button">{{ __('Cancel') }}</x-primary-button>
+                                <a href="{{ route('dashboard') }}"> <x-primary-button id="cancel-button" type="button">{{ __('Cancel') }}</x-primary-button></a>
                             </div>
                         </form>
                     </section>
@@ -88,12 +86,12 @@ $(document).ready(function() {
 
     // Handle category form submission
     $('#add-category-button').on('click', function() {
-        let category = $('#category-input').val();
+        let category = $('#name').val(); // Get the category name from the form
 
         // Send an AJAX request to store the category
-        $.post('/categories', { name: category }, function(data) {
+        $.post('/categories', { name: category, _token: $('meta[name="csrf-token"]').attr('content') }, function(data) {
             // On success, update the category dropdown
-            $('#category_id').append($('<option>', {
+            $('#tax_perc').append($('<option>', {
                 value: data.id,
                 text: data.name
             }));
@@ -101,6 +99,7 @@ $(document).ready(function() {
         });
     });
 });
+
 
 </script>
 </x-app-layout>
