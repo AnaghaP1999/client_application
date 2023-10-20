@@ -15,6 +15,7 @@ class Category extends Model
         'name'
     ];
 
+    // get all categories
     public function getCategories() {
         $category = $this->get();
         

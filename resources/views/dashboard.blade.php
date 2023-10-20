@@ -12,43 +12,30 @@
                     <div class="flex items-center justify-end gap-4"><a href="{{ route('add-client') }}">
                         <x-primary-button type="submit">{{ __('Add Client') }}</x-primary-button></a>
                     </div><br>
-                    <table class="w-full mt-6">
-                        @if (session('success'))
-                            <div class="alert alert-success">
-                                {{ session('success') }}
-                            </div>
-                        @elseif (session('error'))
-                            <div class="alert alert-danger">
-                                {{ session('error') }}
-                            </div>
-                        @endif
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Client Name</th>
-                                <th>Category</th> 
-                                <th>Edit</th>
-                                <th>Delete</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                           
-                                <tr align="center">
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td>
-                                    <a href="#"><i class="fa-regular fa-pen-to-square"></i></a>
-                                    </td>
-                                    <td>
-                                        <a href="#" onclick="return confirm('Are you sure you want to delete this invoice?')"><i class="fa-regular fa-trash-can" style="color: #ed0707;"></i></a>
-                                    </td>
-                                </tr> 
-                        
-                        </tbody>
-                    </table>
+                    <div class="w-full mt-6" id="client-list">
+                        @include('client-list', ['clients' => $clients])
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '.pagination a', function (event) {
+            event.preventDefault();
+            var page = $(this).attr('href').split('page=')[1];
+            fetchClients(page);
+        });
+
+        function fetchClients(page) {
+            $.ajax({
+                url: '/get-clients?page=' + page,
+                success: function (data) {
+                    $('#client-list').html(data);
+                },
+            });
+        }
+    });
+</script>
 </x-app-layout>

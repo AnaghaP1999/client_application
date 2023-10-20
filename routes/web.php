@@ -16,7 +16,7 @@ use App\Http\Controllers\ClientController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Route::get('/dashboard', function () {
@@ -28,8 +28,13 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/add-client', [ClientController::class, 'clientForm'])->name('add-client');
-    Route::post('/categories', [ClientController::class, 'addRequirement'])->name('categories');
+    Route::post('/categories', [ClientController::class, 'addCategory'])->name('categories');
     Route::post('/save-client', [ClientController::class, 'addClient'])->name('save-client');
+    Route::get('/dashboard', [ClientController::class, 'index'])->name('dashboard');
+    Route::get('/get-clients', [ClientController::class, 'getClients'])->name('get-clients');
+    Route::get('/get-clients', [ClientController::class, 'getClients']);
+    Route::get('/edit-client/{id}', [ClientController::class, 'editClientDetails'])->name('edit-client');
+    Route::get('/delete-client/{id}', [ClientController::class, 'deleteClient'])->name('delete-client');
 });
 
 require __DIR__.'/auth.php';
